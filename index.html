@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/TimeCircles.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <!--
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+-->
+
+    <script src="scripts/gameOfLifeCore.js"></script>
+    <script src="scripts/gameEngineSDK.js"></script>
+    <script src="scripts/gameEngine.js"></script>
+    <script src="scripts/botsSample.js"></script>
+
+    <script src="scripts/display.js"></script>
+    <script src="scripts/TimeCircles.js"></script>
+
+    <style>
+        .player-info-text {
+            color: white;
+            font-size: medium;
+        }
+    </style>
+
+
+</head>
+
+<body onload="onLoad();" style="font-family: fantasy;" background="images/bk_milky-way-starry-sky-night-sky-star-956999.jpeg">
+
+<div ng-app="">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12" style="padding-top: 10px;">
+                <!--div style="font-size: x-large; color: white;padding: 10px;" >BOTs WAR !!!</div-->
+                <div style="background-image: url('images/header.png');background-repeat: no-repeat; height: 80px; " />
+            </div>
+        </div>
+
+        <div class="row" >
+
+            <div class="col-lg-4" style="padding-left:2%; ">
+                <div class="player-info-text" style="font-size: x-large;padding-bottom: 10px" >Players Information:</div>
+
+                <!-- Play A information -->
+                <div class="player-info-text" style="font-weight: bold;">Player A:</div>
+                <table border="1" width="100%" class="player-info-text">
+                    <tr>
+                        <td>Name:</td>
+                        <td>
+                            <select id="playerASelectOption"  onchange="updateEngineersNames(this,'playerAEngineers');" style="color: black;">
+                                <option >***Select BOT***</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Score:</td>
+                        <td><label id="lblPlayer_A_Score"/></td>
+                    </tr>
+                    <tr>
+                        <td>Team members:</td>
+                        <td><label id="playerAEngineers">Bot Engineers</label></td>
+                    </tr>
+                </table>
+
+                <br><br>
+                <!-- Play B information -->
+                <div class="player-info-text" style="font-weight: bold;" >Player B:</div>
+                <table border="1" width="100%" class="player-info-text">
+                    <tr>
+                        <td>Name:</td>
+                        <td>
+                            <select id="playerBSelectOption" onchange="updateEngineersNames(this,'playerBEngineers');" style="color: black;">
+                                <option>***Select BOT***</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Score:</td>
+                        <td><label id="lblPlayer_B_Score"/></td>
+                    </tr>
+                    <tr>
+                        <td>Team members:</td>
+                        <td><label id="playerBEngineers">Bot Engineers</label></td>
+                    </tr>
+                </table>
+
+
+
+                <div class="player-info-text">
+                    <label id="lblWinnerAnnouncement"></label>
+                    <!--lablel id="lblClockDisplay"></lablel-->
+                </div>
+
+                <br>
+                <!-- buttons area -->
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="startNewGame();">Fight!</button>
+                    <button type="button" class="btn btn-primary" onclick="stopGame();">Stop</button>
+                    <button type="button" class="btn btn-primary" onclick="displayBoard();" style="display: none;">Display current</button>
+                    <button type="button" class="btn btn-primary" onclick="onNextGenClick();" style="display: none;">Next</button>
+                </div>
+
+
+                <!-- clock area -->
+                <div class="stopWatch" data-timer="90" style="color: white; width: 50%; height: 80%;" ></div>
+                <script>
+                    $(".stopWatch").TimeCircles({start:false, time: { Days: { show: false }, Hours: { show: false }, Minutes:{show:false}}});
+                </script>
+
+            </div>
+
+            <div class="col-lg-8">
+
+                <div class="player-info-text" style="text-align: center; font-family: fantasy; font-weight: bold" id="playerA_displayNameDiv">Player A</div>
+                <canvas id="matrixCanvas"  style="border-style: solid; background-color: black;"></canvas>
+                <div class="player-info-text" style="text-align: center;" id="playerB_displayNameDiv">Player B</div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div class="row" style="height: 50px;padding: 10px;">
+        <audio id="backGroundAudio">
+            <source id="backGroundSource" src="">
+        </audio>
+
+
+        <div class="col-lg-12">
+            <label id="lblGeneration" ></label>
+        </div>
+    </div>
+
+    <img id="imgStar" src="images/animated-white-sky-star.gif" style="z-index: 1000; position: fixed; " width="20px;" height="20px;">
+    <img id="imgGameOver" src="images/gameOver.jpg" style="z-index: 1000;" hidden="hidden">
+
+
+
+</div>
+
+<script>
+
+
+
+</script>
+
+</body>
+</html>
